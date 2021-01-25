@@ -1,0 +1,821 @@
+
+state 0
+	$accept: .program $end 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	RETURN  shift 12
+	.  error
+
+	program  goto 1
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 4
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+	stmt  goto 3
+	retstmt  goto 5
+	stmts  goto 2
+
+state 1
+	$accept:  program.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	program:  stmts.    (1)
+	stmts:  stmts.stmt end_of_stmt 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	RETURN  shift 12
+	.  reduce 1 (src line 52)
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 4
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+	stmt  goto 21
+	retstmt  goto 5
+
+state 3
+	stmts:  stmt.end_of_stmt 
+
+	';'  shift 23
+	EOL  shift 24
+	.  error
+
+	end_of_stmt  goto 22
+
+state 4
+	stmt:  expr.    (6)
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 6 (src line 61)
+
+	comparison  goto 27
+
+state 5
+	stmt:  retstmt.    (7)
+
+	.  reduce 7 (src line 62)
+
+
+state 6
+	expr:  bindexpr.    (12)
+
+	.  reduce 12 (src line 73)
+
+
+state 7
+	expr:  assignexpr.    (13)
+
+	.  reduce 13 (src line 74)
+
+
+state 8
+	expr:  funcexpr.    (14)
+
+	.  reduce 14 (src line 75)
+
+
+state 9
+	expr:  ifexpr.    (15)
+
+	.  reduce 15 (src line 76)
+
+
+state 10
+	bindexpr:  ident.BIND expr 
+	assignexpr:  ident.ASSIGN expr 
+	expr:  ident.'(' callargs ')' 
+	factor:  ident.    (34)
+
+	'('  shift 33
+	BIND  shift 31
+	ASSIGN  shift 32
+	.  reduce 34 (src line 108)
+
+
+state 11
+	expr:  factor.    (17)
+	factor:  factor.'*' term 
+	factor:  factor.'/' term 
+
+	'*'  shift 34
+	'/'  shift 35
+	.  reduce 17 (src line 78)
+
+
+state 12
+	retstmt:  RETURN.expr 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 36
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 13
+	funcexpr:  FUNCTION.'(' funcargs ')' block 
+
+	'('  shift 37
+	.  error
+
+
+state 14
+	ifexpr:  IF.'(' expr ')' block 
+	ifexpr:  IF.'(' expr ')' block ELSE block 
+
+	'('  shift 38
+	.  error
+
+
+state 15
+	ident:  IDENTIFIER.    (38)
+
+	.  reduce 38 (src line 116)
+
+
+state 16
+	factor:  term.    (31)
+
+	.  reduce 31 (src line 105)
+
+
+state 17
+	term:  number.    (35)
+
+	.  reduce 35 (src line 111)
+
+
+state 18
+	term:  '('.expr ')' 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 39
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 19
+	term:  '-'.term 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	.  error
+
+	term  goto 40
+	number  goto 17
+
+state 20
+	number:  NUMBER.    (39)
+
+	.  reduce 39 (src line 119)
+
+
+state 21
+	stmts:  stmts stmt.end_of_stmt 
+
+	';'  shift 23
+	EOL  shift 24
+	.  error
+
+	end_of_stmt  goto 41
+
+state 22
+	stmts:  stmt end_of_stmt.    (2)
+
+	.  reduce 2 (src line 55)
+
+
+state 23
+	end_of_stmt:  ';'.    (4)
+
+	.  reduce 4 (src line 59)
+
+
+state 24
+	end_of_stmt:  EOL.    (5)
+
+	.  reduce 5 (src line 59)
+
+
+state 25
+	expr:  expr '+'.factor 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	.  error
+
+	ident  goto 43
+	factor  goto 42
+	term  goto 16
+	number  goto 17
+
+state 26
+	expr:  expr '-'.factor 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	.  error
+
+	ident  goto 43
+	factor  goto 44
+	term  goto 16
+	number  goto 17
+
+state 27
+	expr:  expr comparison.expr 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 45
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 28
+	comparison:  '>'.    (40)
+
+	.  reduce 40 (src line 122)
+
+
+state 29
+	comparison:  '<'.    (41)
+
+	.  reduce 41 (src line 122)
+
+
+state 30
+	comparison:  EQ.    (42)
+
+	.  reduce 42 (src line 122)
+
+
+state 31
+	bindexpr:  ident BIND.expr 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 46
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 32
+	assignexpr:  ident ASSIGN.expr 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 47
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 33
+	expr:  ident '('.callargs ')' 
+	callargs: .    (27)
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  reduce 27 (src line 97)
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 49
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+	callargs  goto 48
+
+state 34
+	factor:  factor '*'.term 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	.  error
+
+	term  goto 50
+	number  goto 17
+
+state 35
+	factor:  factor '/'.term 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	.  error
+
+	term  goto 51
+	number  goto 17
+
+state 36
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	retstmt:  RETURN expr.    (30)
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 30 (src line 102)
+
+	comparison  goto 27
+
+state 37
+	funcexpr:  FUNCTION '('.funcargs ')' block 
+	funcargs: .    (24)
+
+	IDENTIFIER  shift 15
+	.  reduce 24 (src line 92)
+
+	ident  goto 53
+	funcargs  goto 52
+
+state 38
+	ifexpr:  IF '('.expr ')' block 
+	ifexpr:  IF '('.expr ')' block ELSE block 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 54
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 39
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	term:  '(' expr.')' 
+
+	'+'  shift 25
+	'-'  shift 26
+	')'  shift 55
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  error
+
+	comparison  goto 27
+
+state 40
+	term:  '-' term.    (37)
+
+	.  reduce 37 (src line 113)
+
+
+state 41
+	stmts:  stmts stmt end_of_stmt.    (3)
+
+	.  reduce 3 (src line 56)
+
+
+state 42
+	expr:  expr '+' factor.    (18)
+	factor:  factor.'*' term 
+	factor:  factor.'/' term 
+
+	'*'  shift 34
+	'/'  shift 35
+	.  reduce 18 (src line 79)
+
+
+state 43
+	factor:  ident.    (34)
+
+	.  reduce 34 (src line 108)
+
+
+state 44
+	expr:  expr '-' factor.    (19)
+	factor:  factor.'*' term 
+	factor:  factor.'/' term 
+
+	'*'  shift 34
+	'/'  shift 35
+	.  reduce 19 (src line 80)
+
+
+45: shift/reduce conflict (shift 25(0), red'n 20(0)) on '+'
+45: shift/reduce conflict (shift 26(0), red'n 20(0)) on '-'
+45: shift/reduce conflict (shift 30(0), red'n 20(0)) on EQ
+45: shift/reduce conflict (shift 28(0), red'n 20(0)) on '>'
+45: shift/reduce conflict (shift 29(0), red'n 20(0)) on '<'
+state 45
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	expr:  expr comparison expr.    (20)
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 20 (src line 81)
+
+	comparison  goto 27
+
+46: shift/reduce conflict (shift 25(0), red'n 10(0)) on '+'
+46: shift/reduce conflict (shift 26(0), red'n 10(0)) on '-'
+46: shift/reduce conflict (shift 30(0), red'n 10(0)) on EQ
+46: shift/reduce conflict (shift 28(0), red'n 10(0)) on '>'
+46: shift/reduce conflict (shift 29(0), red'n 10(0)) on '<'
+state 46
+	bindexpr:  ident BIND expr.    (10)
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 10 (src line 69)
+
+	comparison  goto 27
+
+47: shift/reduce conflict (shift 25(0), red'n 11(0)) on '+'
+47: shift/reduce conflict (shift 26(0), red'n 11(0)) on '-'
+47: shift/reduce conflict (shift 30(0), red'n 11(0)) on EQ
+47: shift/reduce conflict (shift 28(0), red'n 11(0)) on '>'
+47: shift/reduce conflict (shift 29(0), red'n 11(0)) on '<'
+state 47
+	assignexpr:  ident ASSIGN expr.    (11)
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 11 (src line 71)
+
+	comparison  goto 27
+
+state 48
+	expr:  ident '(' callargs.')' 
+	callargs:  callargs.',' expr 
+
+	')'  shift 56
+	','  shift 57
+	.  error
+
+
+state 49
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	callargs:  expr.    (28)
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 28 (src line 98)
+
+	comparison  goto 27
+
+state 50
+	factor:  factor '*' term.    (32)
+
+	.  reduce 32 (src line 106)
+
+
+state 51
+	factor:  factor '/' term.    (33)
+
+	.  reduce 33 (src line 107)
+
+
+state 52
+	funcexpr:  FUNCTION '(' funcargs.')' block 
+	funcargs:  funcargs.',' ident 
+
+	')'  shift 58
+	','  shift 59
+	.  error
+
+
+state 53
+	funcargs:  ident.    (25)
+
+	.  reduce 25 (src line 93)
+
+
+state 54
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	ifexpr:  IF '(' expr.')' block 
+	ifexpr:  IF '(' expr.')' block ELSE block 
+
+	'+'  shift 25
+	'-'  shift 26
+	')'  shift 60
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  error
+
+	comparison  goto 27
+
+state 55
+	term:  '(' expr ')'.    (36)
+
+	.  reduce 36 (src line 112)
+
+
+state 56
+	expr:  ident '(' callargs ')'.    (16)
+
+	.  reduce 16 (src line 77)
+
+
+state 57
+	callargs:  callargs ','.expr 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 61
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+
+state 58
+	funcexpr:  FUNCTION '(' funcargs ')'.block 
+
+	'{'  shift 63
+	.  error
+
+	block  goto 62
+
+state 59
+	funcargs:  funcargs ','.ident 
+
+	IDENTIFIER  shift 15
+	.  error
+
+	ident  goto 64
+
+state 60
+	ifexpr:  IF '(' expr ')'.block 
+	ifexpr:  IF '(' expr ')'.block ELSE block 
+
+	'{'  shift 63
+	.  error
+
+	block  goto 65
+
+state 61
+	expr:  expr.'+' factor 
+	expr:  expr.'-' factor 
+	expr:  expr.comparison expr 
+	callargs:  callargs ',' expr.    (29)
+
+	'+'  shift 25
+	'-'  shift 26
+	EQ  shift 30
+	'>'  shift 28
+	'<'  shift 29
+	.  reduce 29 (src line 99)
+
+	comparison  goto 27
+
+state 62
+	funcexpr:  FUNCTION '(' funcargs ')' block.    (23)
+
+	.  reduce 23 (src line 89)
+
+
+state 63
+	block:  '{'.stmts '}' 
+	block:  '{'.'}' 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	RETURN  shift 12
+	'}'  shift 67
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 4
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+	stmt  goto 3
+	retstmt  goto 5
+	stmts  goto 66
+
+state 64
+	funcargs:  funcargs ',' ident.    (26)
+
+	.  reduce 26 (src line 94)
+
+
+state 65
+	ifexpr:  IF '(' expr ')' block.    (21)
+	ifexpr:  IF '(' expr ')' block.ELSE block 
+
+	ELSE  shift 68
+	.  reduce 21 (src line 84)
+
+
+state 66
+	stmts:  stmts.stmt end_of_stmt 
+	block:  '{' stmts.'}' 
+
+	'-'  shift 19
+	'('  shift 18
+	NUMBER  shift 20
+	IDENTIFIER  shift 15
+	FUNCTION  shift 13
+	IF  shift 14
+	RETURN  shift 12
+	'}'  shift 69
+	.  error
+
+	bindexpr  goto 6
+	assignexpr  goto 7
+	funcexpr  goto 8
+	expr  goto 4
+	ident  goto 10
+	ifexpr  goto 9
+	factor  goto 11
+	term  goto 16
+	number  goto 17
+	stmt  goto 21
+	retstmt  goto 5
+
+state 67
+	block:  '{' '}'.    (9)
+
+	.  reduce 9 (src line 66)
+
+
+state 68
+	ifexpr:  IF '(' expr ')' block ELSE.block 
+
+	'{'  shift 63
+	.  error
+
+	block  goto 70
+
+state 69
+	block:  '{' stmts '}'.    (8)
+
+	.  reduce 8 (src line 65)
+
+
+state 70
+	ifexpr:  IF '(' expr ')' block ELSE block.    (22)
+
+	.  reduce 22 (src line 86)
+
+
+28 terminals, 19 nonterminals
+43 grammar rules, 71/16000 states
+15 shift/reduce, 0 reduce/reduce conflicts reported
+68 working sets used
+memory: parser 140/240000
+55 extra closures
+167 shift entries, 1 exceptions
+41 goto entries
+110 entries saved by goto default
+Optimizer space used: output 120/240000
+120 table entries, 10 zero
+maximum spread: 27, maximum offset: 68
